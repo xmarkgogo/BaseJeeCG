@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<excelConfig>
+	<parameters>
+		<!--保存时使用的模板,根据配置文件生成的excel,需要将数据保存为excel到本地,然后有save方法,再生成sql,保存到本地-->
+		<parameter name="outputFilePath" value="C:\temo\OUT.xlsx" isShow="1"/>
+		<!--<parameter isShow="1" name="template_FilePath" value="C:\00_Project\Jeesite070310\src\main\java\com\thinkgem\jeesite\common\excelConfig\test\xlsx\erp\enter\computer\computer.xlsx"/>-->
+		<parameter isShow="1" name="template_FilePath" value="computerUsageRecord.xlsx"/>
+		<parameter isShow="1" name="temlateSyntax" value="false"/>
+		<parameter isShow="0" name="expressCode" class="java.lang.String" htmlType="input" desc="服务编码" isRequired="1" value="" modelId="" />
+		<parameter isShow="0" name="edp" class="java.lang.String" htmlType="input" desc="EDP" isRequired="1" value="" modelId="" />
+		<parameter isShow="0" name="computerName" class="java.lang.String" htmlType="input" desc="计算机名称" isRequired="1" value="" modelId="" />
+		<parameter isShow="0" name="SerialNo" class="java.lang.String" htmlType="input" desc="财务编码" isRequired="1" value="" modelId="" />
+	</parameters>
+	<models cls="">
+		<!--
+			引用多数据源
+			配置了全局参数
+		-->
+		<!--查询-->
+		<model  id="computerQuery">
+			<parameters>
+				<parameter name="expressCode" class="java.lang.String"  value="$P!{expressCode}" />
+				<parameter name="edp" class="java.lang.String"  value="$P!{edp}" />
+				<parameter name="computerName" class="java.lang.String"  value="$P!{computerName}" />
+				<parameter name="SerialNo" class="java.lang.String"  value="$P!{SerialNo}" />
+			</parameters>
+			<SQLStrs>
+
+				<sqlStr>
+					<![CDATA[
+						SELECT b.TransactionType,b.TransactionDate,b.currentEmployeeID,b.currentEmployeeName,a.EDP,a.Series,a.SerialNo,a.ExpressCode,a.ComputerName,a.WarrantyEnd  FROM IT_Asset a
+							JOIN  IT_Transaction b ON a.SerialNo=b.assetSerialNo
+							WHERE 1=1 and a.type='A1'
+							<#if SerialNo?? && SerialNo != "">
+							 AND a.SerialNo='$P!{SerialNo}'
+							</#if>
+							<#if edp?? && edp != "">
+							 AND  a.EDP='$P!{edp}'
+							</#if>
+							<#if expressCode?? && expressCode != "">
+							 AND a.ExpressCode='$P!{expressCode}'
+							</#if>
+							<#if computerName?? && computerName != "">
+							 AND a.ComputerName='$P!{computerName}'
+							</#if>
+							ORDER BY b.TransactionDate desc
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+	</models>
+	<!--查询视图-->
+	<views   action="query">
+		<view modelid="computerQuery" sheetName="电脑"   top="2" left="0">
+			<propertys>
+				<property 	cellIndex="0,0" feild="ComputerName" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="EDP" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="ExpressCode" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="ExpressCode" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="Series" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="WarrantyEnd" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="currentEmployeeID" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="currentEmployeeName" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="TransactionDate" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="TransactionType" 	type="java.lang.String"/>
+			</propertys>
+		</view>
+	</views>
+</excelConfig>

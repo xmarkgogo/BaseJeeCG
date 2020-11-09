@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<excelConfig>
+	<parameters>
+		<!--保存时使用的模板,根据配置文件生成的excel,需要将数据保存为excel到本地,然后有save方法,再生成sql,保存到本地-->
+		<parameter name="outputFilePath" value="C:\temo\OUT.xlsx" isShow="1"/>
+		<!--<parameter isShow="1" name="template_FilePath" value="C:\00_Project\Jeesite070310\src\main\java\com\thinkgem\jeesite\common\excelConfig\test\xlsx\erp\enter\computer\computer.xlsx"/>-->
+		<parameter isShow="1" name="template_FilePath" value="assetDetail_iphone.xlsx"/>
+		<parameter isShow="1" name="temlateSyntax" value="false"/>
+	</parameters>
+	<models cls="">
+		<!--
+			引用多数据源,
+			配置了全局参数
+		-->
+		<!--查询-->
+		<model  id="assetTypeQuery">
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+SELECT * FROM(
+SELECT
+DATEDIFF ( dd , getdate() , WarrantyEnd ) [质保倒计时]
+, SerialNo [手机号]
+, ExpressCode [密码]
+, Field2 [资产状态]
+,WarrantyEnd [保质期结束时间]
+,a.Type [资产类型]
+,isnull(c.no,'') [员工ID]
+,isnull(c.name ,'IT库房')[员工姓名]
+,isnull(d.name,'IT') [部门]
+FROM IT_Asset a
+INNER JOIN  (
+
+SELECT * FROM IT_Transaction a
+WHERE a.TransactionDate=(SELECT  max(b.TransactionDate) TransactionDate FROM IT_Transaction b WHERE a.assetSerialNo=b.assetSerialNo  )
+
+) b ON a.SerialNo = b.assetSerialNo
+LEFT JOIN sys_user c ON b.currentEmployeeID=c.no
+LEFT JOIN sys_office d ON c.office_id=d.id
+ WHERE 1=1    AND a.type='A2'
+ UNION ALL
+
+
+ SELECT
+DATEDIFF ( dd , getdate() , WarrantyEnd ) [质保倒计时]
+, SerialNo [手机号]
+, ExpressCode [密码]
+, Field2 [资产状态]
+,WarrantyEnd [保质期结束时间]
+,a.Type [资产类型]
+,'' [员工ID]
+,'IT库房' [员工姓名]
+,'IT' [部门]
+FROM IT_Asset  a
+WHERE  a.SerialNo NOT IN (
+SELECT assetSerialNo FROM IT_Transaction a
+WHERE a.TransactionDate=(SELECT  max(b.TransactionDate) TransactionDate FROM IT_Transaction b WHERE a.assetSerialNo=b.assetSerialNo  )
+) AND a.type='A2'
+) temp ORDER BY [质保倒计时] DESC
+
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+	</models>
+	<!--查询视图-->
+	<views   action="query">
+		<view modelid="assetTypeQuery" sheetName="固定资产质保时效报告"   top="2" left="0">
+			<propertys>
+				<property 	cellIndex="0,1" feild="质保倒计时" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="手机号" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="密码" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="资产状态" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="保质期结束时间" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="资产类型" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="员工ID" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="员工姓名" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="部门" 	type="java.lang.String"/>
+			</propertys>
+		</view>
+	</views>
+</excelConfig>

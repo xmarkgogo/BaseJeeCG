@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<excelConfig>
+	<parameters>
+		<!--保存时使用的模板,根据配置文件生成的excel,需要将数据保存为excel到本地,然后有save方法,再生成sql,保存到本地-->
+		<parameter name="outputFilePath" value=""/>
+	</parameters>
+	<models cls="">
+		<!--
+			单表查询显示
+		-->
+		<model  id="ZZStudent_Query">
+			<parameters>
+				<parameter name="Sno" class="java.lang.String" desc="sno" value="1"/>
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+						SELECT Sno, Sname, Sex, Sage, Sdept
+						FROM dbo.ZZStudent
+						WHERE Sno ='$P!{Sno}';
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+		<model  id="ZZStudent_Save">
+			<parameters >
+				<parameter name="Sno" class="java.lang.String"   value="$F!{Sdept}"/>
+				<parameter name="Sname" class="java.lang.String" value="$F!{Sname}"/>
+				<parameter name="Sex" class="java.lang.String"   value="$F!{Sex}"/>
+				<parameter name="Sage" class="java.lang.String"  value="$F!{Sage}"/>
+				<parameter name="Sdept" class="java.lang.String" value="$F!{Sdept}"/>
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+					INSERT INTO dbo.ZZStudent (Sno, Sname, Sex, Sage, Sdept)
+					VALUES ('$P!{Sno}', '$P!{Sname}', '$P!{Sex}', $P!{Sage}, '$P!{Sdept}');
+			        ]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+
+	</models>
+ 		<views   action="query">
+				<view modelid="ZZStudent_Query" sheetName="sheet1"   top="1" left="1">
+					<propertys>
+						<property 	cellIndex="0,1" feild="Sno" 	type="java.lang.Integer"  />
+						<property 	cellIndex="0,1" feild="Sname"   type="java.lang.String" />
+						<property 	cellIndex="0,1"	feild="Sex" 	type="java.lang.String" />
+						<property 	cellIndex="0,1"	feild="Sage" 	type="java.lang.String" />
+						<property 	cellIndex="0,1"	feild="Sdept" 	type="java.lang.String" />
+						<property 	cellIndex="0,1"	feild="Sdept" 	type="java.lang.String"
+									getValueFunction="com.thinkgem.jeesite.common.excelConfig.impl.GenID"
+						/>
+					</propertys>
+				</view>
+		</views>
+		<views   action="save">
+				<view  modelid="ZZStudent_Save"   sheetName="sheet1" top="1" left="1">
+					<propertys>
+						<property 	cellIndex="0,1" feild="Sno"         type="java.lang.String"  	 required="1" />
+						<property 	cellIndex="0,1" feild="Sname"  		type="java.lang.String"      required="-1"  />
+						<property 	cellIndex="0,1"	feild="Sex"       	type="java.lang.String"      required="-1"  />
+						<property 	cellIndex="0,1"	feild="Sage"    	type="java.lang.String"      required="-1"  />
+						<property 	cellIndex="0,1"	feild="Sdept"    	type="java.lang.String"      required="-1"  />
+						<property 	cellIndex="-1"	feild="VF"
+									type="java.lang.String"
+									required="-1"
+								    getValueFunction="com.thinkgem.jeesite.common.excelConfig.impl.GenID"/>
+					</propertys>
+				</view>
+		</views>
+</excelConfig>

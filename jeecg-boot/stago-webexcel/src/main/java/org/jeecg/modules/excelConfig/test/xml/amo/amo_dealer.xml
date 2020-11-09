@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<excelConfig>
+	<parameters>
+		<!--保存时使用的模板,根据配置文件生成的excel,需要将数据保存为excel到本地,然后有save方法,再生成sql,保存到本地-->
+		<parameter name="outputFilePath" value="C:\temo\OUT.xlsx" isShow="1"/>
+		<!--<parameter isShow="1" name="template_FilePath" value="C:\00_Project\Jeesite070310\src\main\java\com\thinkgem\jeesite\common\excelConfig\test\xlsx\erp\enter\computer\computer.xlsx"/>-->
+		<parameter isShow="1" name="template_FilePath" value="template.xlsx"/>
+		<parameter isShow="1" name="temlateSyntax" value="false"/>
+		<parameter isShow="0" name="pOrdFlag" class="java.lang.String" htmlType="input"  isRequired="1" value="d" modelId="" />
+		<parameter isShow="0" name="dealer_id" class="java.lang.String" htmlType="input" desc="省份" isRequired="1" value="" modelId="" />
+
+	</parameters>
+	<WebExcleView  JsSource="">
+		<Plus  cellRange="C14:D14"          CellType="UnLockCell"    />
+		<Plus  cellRange="C16:D16"          CellType="UnLockCell"    />
+		<Plus  cellRange="E14"          CellType="UnLockCell"    />
+		<Plus  cellRange="L11:L21"          CellType="UnLockCell"    />
+		<Plus  cellRange="D28:D31"          CellType="UnLockCell"    />
+		<Plus  cellRange="D33"          CellType="UnLockCell"    />
+		<!--
+		 CellType：支持Combo  DatePicker CheckBoxList  GroupList 如果其他格式，定制ComponentPlus.js
+		 cellRange 支持混排模式 支持区间模式D1:D10 支持列模式 E不指定数字后缀代表E这一整列
+		 cls配置的是专门用来处理数据的Java类
+		 modelid
+		 带有上下级的关系树，配置的数据源必须 含有以下字段 ID() PID()  text()  value () order(排序)
+		 普通的数据源 必须含有字段text()  value
+		-->
+	</WebExcleView>
+	<models cls="">
+		<!--
+			引用多数据源,
+			配置了全局参数
+		-->
+		<!--查询-->
+		<model  id="dealerQuery">
+			<parameters>
+				<parameter name="dealer_id" class="java.lang.String"  value="$P!{dealer_id}" />
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					SELECT SL01002 'dealerName', SL01001 'dealerID' FROM SL010700 WHERE SL01001='$P!{dealer_id}'
+				</sqlStr>
+			</SQLStrs>
+		</model>
+		<model  id="insQuery_stac">
+			<parameters>
+				<parameter name="dealer_id" class="java.lang.String"  value="$P!{dealer_id}" />
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+						SELECT a.CODE,a.Name
+,cast (sum(isnull(b.objective,0)) as NUMERIC (32,0))  'objective'
+FROM
+AMOTOPTEN a
+LEFT JOIN AMOTOPTEN_DATA b ON a.CODE=b.CODE
+AND b.ID_='$P!{dealer_id}'
+WHERE Classification='C' and a.code='58741'
+GROUP BY a.CODE,a.Name,a.NO
+ORDER BY a.NO
+
+
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+		<model  id="insQuery_star">
+			<parameters>
+				<parameter name="dealer_id" class="java.lang.String"  value="$P!{dealer_id}" />
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+												SELECT a.CODE,a.Name
+,cast (sum(isnull(b.objective,0)) as NUMERIC (32,0))  'objective'
+FROM
+AMOTOPTEN a
+LEFT JOIN AMOTOPTEN_DATA b ON a.CODE=b.CODE
+AND b.ID_='$P!{dealer_id}'
+WHERE Classification='C' and a.code='58409'
+GROUP BY a.CODE,a.Name,a.NO
+ORDER BY a.NO
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+
+		<model  id="digQuery">
+			<parameters>
+				<parameter name="dealer_id" class="java.lang.String"  value="$P!{dealer_id}" />
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+					SELECT a.CODE,a.Name,  '$P!{dealer_id}' dealerId
+,cast (sum(isnull(b.objective,0)) as NUMERIC (32,0)) objective
+FROM AMOTOPTEN a
+left JOIN AMOTOPTEN_DATA b ON a.CODE=b.CODE
+AND b.ID_ ='$P!{dealer_id}'
+ WHERE Classification='A'
+GROUP BY a.CODE,a.Name,a.NO,b.ID_
+ORDER BY a.NO
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+
+		<model  id="totalQuery_r">
+			<parameters>
+				<parameter name="dealer_id" class="java.lang.String"  value="$P!{dealer_id}" />
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+		SELECT a.CODE,a.Name
+		,cast(sum(isnull(b.objective,0))as NUMERIC (32,0))  objective
+		FROM
+		AMOTOPTEN a
+		LEFT JOIN AMOTOPTEN_DATA b ON a.CODE=b.CODE
+		WHERE Classification='B' and a.code='Routine'
+		AND b.ID_='$P!{dealer_id}' AND b.ID_TYPE='D'
+		GROUP BY a.CODE,a.Name,a.NO
+		ORDER BY a.NO
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+		<model  id="totalQuery_d">
+			<parameters>
+				<parameter name="dealer_id" class="java.lang.String"  value="$P!{dealer_id}" />
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+		SELECT a.CODE,a.Name
+		,cast(sum(isnull(b.objective,0))as NUMERIC (32,0))  objective
+		FROM
+		AMOTOPTEN a
+		LEFT JOIN AMOTOPTEN_DATA b ON a.CODE=b.CODE
+		WHERE Classification='B' and a.code='D-Dimer/FDP'
+		AND b.ID_='$P!{dealer_id}' AND b.ID_TYPE='D'
+		GROUP BY a.CODE,a.Name,a.NO
+		ORDER BY a.NO
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+		<model  id="totalQuery_c">
+			<parameters>
+				<parameter name="dealer_id" class="java.lang.String"  value="$P!{dealer_id}" />
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+		SELECT a.CODE,a.Name
+		,cast(sum(isnull(b.objective,0))as NUMERIC (32,0))  objective
+		FROM
+		AMOTOPTEN a
+		LEFT JOIN AMOTOPTEN_DATA b ON a.CODE=b.CODE
+		WHERE Classification='B' and a.code='CAL/QC'
+		AND b.ID_='$P!{dealer_id}' AND b.ID_TYPE='D'
+		GROUP BY a.CODE,a.Name,a.NO
+		ORDER BY a.NO
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+		<model  id="totalQuery_re">
+			<parameters>
+				<parameter name="dealer_id" class="java.lang.String"  value="$P!{dealer_id}" />
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+		SELECT a.CODE,a.Name
+		,cast(sum(isnull(b.objective,0))as NUMERIC (32,0))  objective
+		FROM
+		AMOTOPTEN a
+		LEFT JOIN AMOTOPTEN_DATA b ON a.CODE=b.CODE
+		WHERE Classification='B' and a.code='Remaining Products'
+		AND b.ID_='$P!{dealer_id}' AND b.ID_TYPE='D'
+		GROUP BY a.CODE,a.Name,a.NO
+		ORDER BY a.NO
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+		<model  id="totalQuery_dis">
+			<parameters>
+				<parameter name="dealer_id" class="java.lang.String"  value="$P!{dealer_id}" />
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+		SELECT a.CODE,a.Name
+		,cast(sum(isnull(b.objective,0))as NUMERIC (32,0))  objective
+		FROM
+		AMOTOPTEN a
+		LEFT JOIN AMOTOPTEN_DATA b ON a.CODE=b.CODE
+
+		WHERE Classification='B' and a.code='Disposables'
+		AND b.ID_='$P!{dealer_id}' AND b.ID_TYPE='D'
+		GROUP BY a.CODE,a.Name,a.NO
+		ORDER BY a.NO
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+
+		<!--保存-->
+		<!--ins-->
+		<model  id="insSave_stac">
+			<parameters>
+				<parameter name="objective" class="java.lang.String"  value="$F!{objective}" />
+				<parameter name="dealer_id" class="java.lang.String"  value="$P!{dealer_id}" />
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+					IF
+						(SELECT count(*) FROM AMOTOPTEN_DATA WHERE ID_TYPE='D' AND ID_='$P!{dealer_id}' AND CODE='58741' )>0
+					BEGIN
+						UPDATE dbo.AMOTOPTEN_DATA
+						SET objective = $P!{objective}
+						WHERE CODE='58741' AND ID_='$P!{dealer_id}' AND ID_TYPE='D' AND YEAR=datepart(yyyy,getdate())
+					END ELSE
+					BEGIN
+						 INSERT INTO dbo.AMOTOPTEN_DATA (ID, CODE, objective, ID_, ID_TYPE, YEAR)
+					VALUES (newid(), '58741',$P!{objective} , '$P!{dealer_id}', 'D', datepart(yyyy,getdate() ))
+					END
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+
+		<model  id="insSave_star">
+			<parameters>
+				<parameter name="objective" class="java.lang.String"  value="$F!{objective}" />
+				<parameter name="dealer_id" class="java.lang.String"  value="$P!{dealer_id}" />
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+						IF
+							(SELECT count(*) FROM AMOTOPTEN_DATA WHERE ID_TYPE='D' AND ID_='$P!{dealer_id}' AND CODE='58409' )>0
+						BEGIN
+							UPDATE dbo.AMOTOPTEN_DATA
+							SET objective = $P!{objective}
+							WHERE CODE='58409' AND ID_='$P!{dealer_id}' AND ID_TYPE='D' AND YEAR=datepart(yyyy,getdate())
+						END ELSE
+						BEGIN
+							 INSERT INTO dbo.AMOTOPTEN_DATA (ID, CODE, objective, ID_, ID_TYPE, YEAR)
+							 VALUES (newid(), '58409',$P!{objective} , '$P!{dealer_id}', 'D', datepart(yyyy,getdate() ))
+						END
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+		<!--dig-->
+		<model  id="digSave">
+			<parameters>
+				<parameter name="CODE" class="java.lang.String"  value="$F!{CODE}" />
+				<parameter name="objective" class="java.lang.String"  value="$F!{objective}" />
+				<parameter name="dealer_id" class="java.lang.String"  value="$P!{dealer_id}" />
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+							DELETE AMOTOPTEN_DATA WHERE CODE='$P!{CODE}' AND ID_='$P!{dealer_id}' AND ID_TYPE='D' AND YEAR=datepart(yyyy,getdate())
+							INSERT INTO dbo.AMOTOPTEN_DATA (ID, CODE, objective, ID_, ID_TYPE, YEAR)
+							VALUES (newid(), '$P!{CODE}',$P!{objective} , '$P!{dealer_id}', 'D', datepart(yyyy,getdate() ))
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+		<!--total-->
+		<model  id="totalSave">
+			<parameters>
+				<parameter name="dealer_id" class="java.lang.String"  value="$P!{dealer_id}" />
+				<parameter name="CODE" class="java.lang.String"  value="$F!{CODE}" />
+				<parameter name="objective" class="java.lang.String"  value="$F!{objective}" />
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+								IF
+								'$P!{CODE}'='Sub-total'
+							BEGIN
+								select 1
+							END ELSE
+							BEGIN
+								DELETE AMOTOPTEN_DATA WHERE CODE= '$P!{CODE}' and ID_='$P!{dealer_id}' AND ID_TYPE='D' AND YEAR=datepart(yyyy,getdate())
+							INSERT INTO dbo.AMOTOPTEN_DATA (ID, CODE, objective, ID_, ID_TYPE, YEAR)
+								VALUES (newid(), '$P!{CODE}',$P!{objective} , '$P!{dealer_id}', 'D', datepart(yyyy,getdate() ))
+							END
+
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+
+	</models>
+
+
+
+	<!--查询视图-->
+	<views   action="query">
+		<view modelid="dealerQuery" sheetName="China"   top="6" left="1">
+			<propertys>
+				<property 	cellIndex="0,0" feild="dealerID" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="dealerName" 	type="java.lang.String"/>
+			</propertys>
+		</view>
+		<view modelid="insQuery_stac" sheetName="China"   top="13" left="1">
+			<propertys>
+				<property 	cellIndex="0,1" feild="objective" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="objective" 	type="java.lang.String"/>
+			</propertys>
+		</view>
+		<view modelid="insQuery_star" sheetName="China"   top="15" left="1">
+			<propertys>
+				<property 	cellIndex="0,1" feild="objective" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="objective" 	type="java.lang.String"/>
+			</propertys>
+		</view>
+		<view modelid="digQuery" sheetName="China"   top="10" left="7">
+			<propertys>
+				<property 	cellIndex="0,0" feild="dealerId" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="CODE" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="Name" 	type="java.lang.String"/>
+				<property 	cellIndex="0,2" feild="objective" 	type="java.lang.String"/>
+			</propertys>
+		</view>
+
+		<view modelid="totalQuery_r" sheetName="China"   top="27" left="2">
+			<propertys>
+				<property 	cellIndex="0,1" feild="objective" 	type="java.lang.String"/>
+			</propertys>
+		</view>
+		<view modelid="totalQuery_d" sheetName="China"   top="28" left="2">
+			<propertys>
+				<property 	cellIndex="0,1" feild="objective" 	type="java.lang.String"/>
+			</propertys>
+		</view>
+		<view modelid="totalQuery_c" sheetName="China"   top="29" left="2">
+			<propertys>
+				<property 	cellIndex="0,1" feild="objective" 	type="java.lang.String"/>
+			</propertys>
+		</view>
+		<view modelid="totalQuery_re" sheetName="China"   top="30" left="2">
+			<propertys>
+				<property 	cellIndex="0,1" feild="objective" 	type="java.lang.String"/>
+			</propertys>
+		</view>
+		<view modelid="totalQuery_dis" sheetName="China"   top="32" left="2">
+			<propertys>
+				<property 	cellIndex="0,1" feild="objective" 	type="java.lang.String"/>
+			</propertys>
+		</view>
+	</views>
+
+
+	<views   action="save">
+		<view modelid="insSave_stac" sheetName="China"  top="13" left="2">
+			<propertys>
+				<property cellIndex="0,0" feild="objective" required ="1"	type="java.lang.String"/>
+			</propertys>
+		</view>
+		<view modelid="insSave_star" sheetName="China"  top="15" left="2">
+			<propertys>
+				<property cellIndex="0,0" feild="objective" required ="1"	type="java.lang.String"/>
+			</propertys>
+		</view>
+		<view modelid="digSave" sheetName="China"  top="10" left="7">
+			<propertys>
+				<property cellIndex="0,1" feild="CODE" required ="1"	type="java.lang.String"/>
+				<property cellIndex="0,3" feild="objective" required ="1"	type="java.lang.String"/>
+			</propertys>
+		</view>
+		<view modelid="totalSave" sheetName="China"  top="27" left="2">
+			<propertys>
+				<property cellIndex="0,0" feild="CODE" required ="1"	type="java.lang.String"/>
+				<property cellIndex="0,1" feild="objective" required ="1"	type="java.lang.String"/>
+			</propertys>
+		</view>
+	</views>
+</excelConfig>

@@ -69,6 +69,10 @@ public class ShiroConfig {
             }
         }
 
+        filterChainDefinitionMap.put("/spreadjs/SpreadJS.Designer.13.1.0/images/**", "anon");
+        filterChainDefinitionMap.put("/elfinder-servlet/**", "anon");
+        filterChainDefinitionMap.put("/elfinder/**", "anon");
+        filterChainDefinitionMap.put("/webexcel/**", "anon");
         //cas验证登录
         filterChainDefinitionMap.put("/cas/client/validateLogin", "anon");
         // 配置不会被拦截的链接 顺序判断

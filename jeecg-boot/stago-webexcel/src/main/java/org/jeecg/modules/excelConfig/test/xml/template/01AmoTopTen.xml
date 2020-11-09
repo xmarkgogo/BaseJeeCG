@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<excelConfig>
+	<parameters>
+		<!--保存时使用的模板,根据配置文件生成的excel,需要将数据保存为excel到本地,然后有save方法,再生成sql,保存到本地-->
+		<parameter name="outputFilePath" value="" isShow="1"/>
+		<parameter isShow="1" name="template_FilePath" value="01AmoTopTen.xlsx"/>
+
+		<parameter name="provinceID" class="java.lang.String" htmlType="select" isShow="0" desc="省份" isRequired="0" value="" modelId="provinceList"/>
+
+	</parameters>
+	<models cls="">
+		<!--
+			引用多数据源,
+			配置了全局参数
+
+		-->
+		<model  id="amoinsquery">
+			<parameters>
+
+				<parameter name="provinceID" class="java.lang.String"  value="$P!{provinceID}" />
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+
+SELECT
+ max(CASE WHEN a.CODE='58741' THEN a.code ELSE '' end) 		'code_58741'
+,max(CASE WHEN a.CODE='58409' THEN a.code ELSE '' end) 	'code_58409'
+,max(CASE WHEN a.CODE='58741' THEN a.name ELSE '' end) 		'name_58741'
+,max(CASE WHEN a.CODE='58409' THEN a.name ELSE '' end) 	'name_58409'
+,sum(CASE WHEN a.CODE='58741' 		THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 		'objective_58741'
+,sum(CASE WHEN a.CODE='58409'		THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 	'objective_58409'
+,max(c.PName) 'pName'
+FROM AMOTOPTEN a
+left JOIN AMOTOPTEN_DATA b ON a.CODE=b.CODE
+ JOIN DEL_Province c ON b.ID_=c.PCode
+ WHERE Classification='C' AND b.ID_ ='$P!{provinceID}' AND b.YEAR = datepart(yyyy,getdate())
+
+
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+
+		<model  id="amopricequery">
+			<parameters>
+				<parameter name="provinceID" class="java.lang.String"  value="$P!{provinceID}" />
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+						SELECT
+ max(CASE WHEN a.CODE='Disposables' THEN a.code ELSE '' end) 		'code_Disposables'
+,max(CASE WHEN a.CODE='RemainingProducts' THEN a.code ELSE '' end) 	'code_RemainingProducts'
+,max(CASE WHEN a.CODE='CAL/QC' THEN a.code ELSE '' end) 			'code_qc'
+,max(CASE WHEN a.CODE='D-Dimer/FDP' THEN a.code ELSE '' end) 		'code_ddi'
+,max(CASE WHEN a.CODE='Routine' THEN a.code ELSE '' end) 			'code_Routine'
+
+
+
+,max(CASE WHEN a.CODE='Disposables' THEN a.name ELSE '' end) 		'name_Disposables'
+,max(CASE WHEN a.CODE='RemainingProducts' THEN a.name ELSE '' end) 	'name_RemainingProducts'
+,max(CASE WHEN a.CODE='CAL/QC' THEN a.name ELSE '' end) 			'name_qc'
+,max(CASE WHEN a.CODE='D-Dimer/FDP' THEN a.name ELSE '' end) 		'name_ddi'
+,max(CASE WHEN a.CODE='Routine' THEN a.name ELSE '' end) 			'name_Routine'
+
+
+
+,sum(CASE WHEN a.CODE='Disposables' 		THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 		'o_disposables'
+,sum(CASE WHEN a.CODE='RemainingProducts'		THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 	'o_remainingproducts'
+,sum(CASE WHEN a.CODE='CAL/QC'		THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 				'o_qc'
+,sum(CASE WHEN a.CODE='D-Dimer/FDP'		THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 			'o_ddi'
+,sum(CASE WHEN a.CODE='Routine'		THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 				'o_routine'
+
+FROM AMOTOPTEN a
+left JOIN AMOTOPTEN_DATA b ON a.CODE=b.CODE
+ WHERE Classification='B' AND b.ID_ ='$P!{provinceID}' AND b.YEAR = datepart(yyyy,getdate())
+
+
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+
+		<model  id="amodigquery">
+			<parameters>
+				<parameter name="provinceID" class="java.lang.String"  value="$P!{provinceID}" />
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+					SELECT
+ max(CASE WHEN a.CODE='00667' THEN a.code ELSE '' end) 			'code_00667'
+,max(CASE WHEN a.CODE='00595' THEN a.code ELSE '' end) 			'code_00595'
+,max(CASE WHEN a.CODE='00674' THEN a.code ELSE '' end) 			'code_00674'
+,max(CASE WHEN a.CODE='00669' THEN a.code ELSE '' end) 			'code_00669'
+,max(CASE WHEN a.CODE='00968' THEN a.code ELSE '' end) 			'code_00968'
+,max(CASE WHEN a.CODE='00649' THEN a.code ELSE '' end) 			'code_00649'
+,max(CASE WHEN a.CODE='00596/00672' THEN a.code ELSE '' end) 	'code_00596_00672'
+,max(CASE WHEN a.CODE='00678/00679' THEN a.code ELSE '' end) 	'code_00678_00679'
+,max(CASE WHEN a.CODE='00975' THEN a.code ELSE '' end) 			'code_00975'
+,max(CASE WHEN a.CODE='00973' THEN a.code ELSE '' end) 			'code_00973'
+,max(CASE WHEN a.CODE='68669' THEN a.code ELSE '' end) 			'code_68669'
+
+
+,max(CASE WHEN a.CODE='00667' THEN a.name ELSE '' end) 'name_00667'
+,max(CASE WHEN a.CODE='00595' THEN a.name ELSE '' end) 'name_00595'
+,max(CASE WHEN a.CODE='00674' THEN a.name ELSE '' end) 'name_00674'
+,max(CASE WHEN a.CODE='00669' THEN a.name ELSE '' end) 'name_00669'
+,max(CASE WHEN a.CODE='00968' THEN a.name ELSE '' end) 'name_00968'
+,max(CASE WHEN a.CODE='00649' THEN a.name ELSE '' end) 'name_00649'
+,max(CASE WHEN a.CODE='00596/00672' THEN a.name ELSE '' end) 'name_00596_00672'
+,max(CASE WHEN a.CODE='00678/00679' THEN a.name ELSE '' end) 'name_00678_00679'
+,max(CASE WHEN a.CODE='00975' THEN a.name ELSE '' end) 'name_00975'
+,max(CASE WHEN a.CODE='00973' THEN a.name ELSE '' end) 'name_00973'
+,max(CASE WHEN a.CODE='68669' THEN a.name ELSE '' end) 'name_68669'
+
+
+,sum(CASE WHEN a.CODE='00667'  		THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 'objective_00667'
+,sum(CASE WHEN a.CODE='00595' 		THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 'objective_00595'
+,sum(CASE WHEN a.CODE='00674' 		THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 'objective_00674'
+,sum(CASE WHEN a.CODE='00669' 		THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 'objective_00669'
+,sum(CASE WHEN a.CODE='00968' 		THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 'objective_00968'
+,sum(CASE WHEN a.CODE='00649' 		THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 'objective_00649'
+,sum(CASE WHEN a.CODE='00596/00672' THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 'objective_00596_00672'
+,sum(CASE WHEN a.CODE='00678/00679' THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 'objective_00678_00679'
+,sum(CASE WHEN a.CODE='00975' 		THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 'objective_00975'
+,sum(CASE WHEN a.CODE='00973' 		THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 'objective_00973'
+,sum(CASE WHEN a.CODE='68669' 		THEN cast (isnull(b.objective,0) as NUMERIC (32,0)) ELSE 0 end) 'objective_68669'
+FROM AMOTOPTEN a
+left JOIN AMOTOPTEN_DATA b ON a.CODE=b.CODE
+
+ WHERE Classification='A' AND b.ID_ ='$P!{provinceID}' AND b.YEAR = datepart(yyyy,getdate())
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+
+		<model  id="provinceList">
+			<parameters>
+				<parameter name="userId" class="java.lang.String"  value="@@USERID" />
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+						SELECT province_id value, province_name name  FROM Del_Province_Saler WHERE salerId='$P!{userId}'
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+
+		<model  id="amoinssave">
+			<parameters >
+				<parameter name="code" class="java.lang.String"      value="$F!{code}"/>
+				<parameter name="objective" class="java.lang.String"   value="$F!{objective}"/>
+				<parameter name="provinceID" class="java.lang.String"   value="$F!{provinceID}"/>
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+					   INSERT INTO AMOTOPTEN_DATA (ID,CODE,objective,ID_,ID_TYPE,YEAR) VALUES (newid(),'$P!{code}',$P!{objective},'$P!{provinceID}','P',datepart(yyyy,getdate()));
+			        ]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+
+		<model  id="amodigsave">
+			<parameters >
+				<parameter name="code" class="java.lang.String"      value="$F!{code}"/>
+				<parameter name="objective" class="java.lang.String"    value="$F!{objective}"/>
+				<parameter name="provinceID" class="java.lang.String"  value="$F!{provinceID}"/>
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+					   INSERT INTO AMOTOPTEN_DATA (ID,CODE,objective,ID_,ID_TYPE,YEAR) VALUES (newid(),'$P!{code}',$P!{objective},'$P!{provinceID}','P',datepart(yyyy,getdate()));
+			        ]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+
+		<model  id="amopricesave">
+			<parameters >
+				<parameter name="code" class="java.lang.String"      value="$F!{code}"/>
+				<parameter name="objective" class="java.lang.String"    value="$F!{objective}"/>
+				<parameter name="provinceID" class="java.lang.String"   value="$F!{provinceID}"/>
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+					 INSERT INTO AMOTOPTEN_DATA (ID,CODE,objective,ID_,ID_TYPE,YEAR) VALUES (newid(),'$P!{code}',$P!{objective},'$P!{provinceID}','P',datepart(yyyy,getdate()));
+			        ]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+	</models>
+	<views   action="query">
+		<view modelid="amodigquery" sheetName="sheet1"   top="1" left="1">
+			<propertys>
+				<property 	cellIndex="0,1" feild="code_00667" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="code_00595" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="code_00674" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="code_00669" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="code_00968" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="code_00649" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="code_00596_00672" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="code_00678_00679" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="code_00975" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="code_00973" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="code_68669" 	type="java.lang.String"/>
+
+				<property 	cellIndex="0,1" feild="name_00667" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="name_00595" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="name_00674" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="name_00669" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="name_00968" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="name_00649" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="name_00596_00672" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="name_00678_00679" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="name_00975" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="name_00973" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="name_68669" 	type="java.lang.String"/>
+
+				<property 	cellIndex="0,1" feild="objective_00667" 		type="java.lang.Number"/>
+				<property 	cellIndex="0,1" feild="objective_00595" 		type="java.lang.Number"/>
+				<property 	cellIndex="0,1" feild="objective_00674" 		type="java.lang.Number"/>
+				<property 	cellIndex="0,1" feild="objective_00669" 		type="java.lang.Number"/>
+				<property 	cellIndex="0,1" feild="objective_00968" 		type="java.lang.Number"/>
+				<property 	cellIndex="0,1" feild="objective_00649" 		type="java.lang.Number"/>
+				<property 	cellIndex="0,1" feild="objective_00596_00672" 	type="java.lang.Number"/>
+				<property 	cellIndex="0,1" feild="objective_00678_00679" 	type="java.lang.Number"/>
+				<property 	cellIndex="0,1" feild="objective_00975" 		type="java.lang.Number"/>
+				<property 	cellIndex="0,1" feild="objective_00973" 		type="java.lang.Number"/>
+				<property 	cellIndex="0,1" feild="objective_68669" 		type="java.lang.Number"/>
+
+
+			</propertys>
+		</view>
+		<view modelid="amoinsquery" sheetName="sheet1"   top="1" left="1">
+			<propertys>
+				<property 	cellIndex="0,1" feild="code_58741" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="code_58409" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="name_58741" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="name_58409" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="pName" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="objective_58741" 	type="java.lang.Number"/>
+				<property 	cellIndex="0,1" feild="objective_58409" 	type="java.lang.Number"/>
+			</propertys>
+		</view>
+
+		<view modelid="amopricequery" sheetName="sheet1"   top="1" left="1">
+			<propertys>
+				<property 	cellIndex="0,1" feild="code_Disposables" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="code_RemainingProducts" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="code_qc" 				type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="code_ddi" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="code_Routine" 	type="java.lang.String"/>
+
+				<property 	cellIndex="0,1" feild="name_Disposables" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="name_RemainingProducts" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="name_qc" 				type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="name_ddi" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="name_Routine" 	type="java.lang.String"/>
+
+				<property 	cellIndex="0,1" feild="o_disposables" 	type="java.lang.Number"/>
+				<property 	cellIndex="0,1" feild="o_remainingproducts" 	type="java.lang.Number"/>
+				<property 	cellIndex="0,1" feild="o_qc" 				type="java.lang.Number"/>
+				<property 	cellIndex="0,1" feild="o_ddi" 	type="java.lang.Number"/>
+				<property 	cellIndex="0,1" feild="o_routine" 	type="java.lang.Number"/>
+			</propertys>
+		</view>
+
+
+	</views>
+	<views   action="save">
+		<view modelid="amoinssave"  top="14" left="0">
+			<propertys>
+				<property 	cellIndex="0,1" feild="Code" 	required ="1" type="java.lang.String"/>
+				<property 	cellIndex="0,2" feild="objective"  required ="1" type="java.lang.String" />
+				<property 	cellIndex="0,1"	feild="provinceID" required ="1"	type="java.lang.String" />
+			</propertys>
+		</view>
+		<view modelid="amodigsave"  top="12" left="8">
+			<propertys>
+				<property 	cellIndex="0,1" feild="code" 	required ="1" type="java.lang.String"/>
+				<property 	cellIndex="0,3" feild="objective" required ="1"  type="java.lang.Number" />
+				<property 	cellIndex="0,1"	feild="provinceID" required ="-1"	type="java.lang.String" />
+			</propertys>
+		</view>
+		<view modelid="amopricesave"  top="28" left="2">
+			<propertys>
+				<property 	cellIndex="0,1" feild="Code" required ="1"	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="objective" required ="1"  type="java.lang.String" />
+				<property 	cellIndex="0,1"	feild="provinceID" required ="-1"	type="java.lang.String" />
+			</propertys>
+		</view>
+		<view modelid="amopricesave"   top="33" left="2">
+			<propertys>
+				<property 	cellIndex="0,1" feild="Code" required ="1"	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="objective" required ="1"  type="java.lang.String" />
+				<property 	cellIndex="0,1"	feild="provinceID" required ="-1"	type="java.lang.String" />
+			</propertys>
+		</view>
+	</views>
+</excelConfig>

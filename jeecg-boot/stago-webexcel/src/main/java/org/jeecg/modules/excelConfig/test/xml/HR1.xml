@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<excelConfig>
+	<parameters>
+		<!--保存时使用的模板,根据配置文件生成的excel,需要将数据保存为excel到本地,然后有save方法,再生成sql,保存到本地-->
+		<parameter name="outputFilePath" value=""/>
+		<parameter name="template_FilePath" value="report.xlsx"/>
+
+	</parameters>
+	<models cls="">
+		<!--
+		**********************
+		 此报告为员工统计报告 入职离职报告
+		*********************
+		-->
+		<model  id="statistic">
+			<parameters>
+				<parameter name="Sno" class="java.lang.String" value="1"/>
+			</parameters>
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+						SELECT
+						F_PAR8 'Depart',
+						--入职日期为今年  且入职日期不为空  （统计今年入职人数）
+						sum(CASE  WHEN  (  datepart(YY,getdate())=datepart(YY,convert(datetime,F_PAR34,101)) )  THEN  1 ELSE 0 END )  'IN' ,
+						--判断离职日期不为空且离职日期为今年 （统计今年离职人数）
+						sum(CASE  WHEN  (  datepart(YY,getdate())=datepart(YY,convert(datetime,F_PAR63,101)) )  THEN  1 ELSE 0 END ) 'OUT'    ,
+						--统计目前部门员工人数（离职日期不为空）
+						 sum(CASE  WHEN  F_PAR63 =''   THEN  1  ELSE 0 END )  'ALL'
+						FROM dbo.T_OBJ_TYPE_REL
+						WHERE F_TYPEID = 'A0'
+						GROUP BY F_PAR8 ,F_PAR58,F_PAR34
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+	</models>
+ 		<views   action="query">
+				<view modelid="statistic" sheetName="sheet1"   top="1" left="1">
+					<propertys>
+						<property 	cellIndex="0,1" feild="depart" 	type="java.lang.String"  />
+						<property 	cellIndex="0,1" feild="IN"      type="java.lang.Integer" />
+						<property 	cellIndex="0,1"	feild="OUT" 	type="java.lang.Integer" />
+						<property 	cellIndex="0,1"	feild="ALL" 	type="java.lang.Integer" />
+					</propertys>
+				</view>
+		</views>
+
+</excelConfig>

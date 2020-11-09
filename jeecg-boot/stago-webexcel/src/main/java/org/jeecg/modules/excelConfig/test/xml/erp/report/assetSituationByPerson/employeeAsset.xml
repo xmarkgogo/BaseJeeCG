@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<excelConfig>
+	<parameters>
+		<!--保存时使用的模板,根据配置文件生成的excel,需要将数据保存为excel到本地,然后有save方法,再生成sql,保存到本地-->
+		<parameter name="outputFilePath" value="C:\temo\OUT.xlsx" isShow="1"/>
+		<!--<parameter isShow="1" name="template_FilePath" value="C:\00_Project\Jeesite070310\src\main\java\com\thinkgem\jeesite\common\excelConfig\test\xlsx\erp\enter\computer\computer.xlsx"/>-->
+		<parameter isShow="1" name="template_FilePath" value="employeeAsset.xlsx"/>
+		<parameter isShow="1" name="temlateSyntax" value="false"/>
+		<parameter isShow="0" name="userId" class="java.lang.String" htmlType="select" desc="员工姓名" isRequired="1" value="" modelId="personQuery" />
+	</parameters>
+	<models cls="">
+		<!--
+			引用多数据源,
+			配置了全局参数
+		-->
+		<!--查询-->
+		<model  id="personQuery">
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+						SELECT EName name, EmployeeID value FROM IT_User WHERE LEFT(EmployeeID ,1)='Z' ORDER  BY EName
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+		<model  id="computerQuery">
+			<parameters>
+				<parameter name="userId" class="java.lang.String"  value="$P!{userId}" />
+			</parameters>
+			<SQLStrs>
+
+				<sqlStr>
+					<![CDATA[
+						SELECT b.ComputerName,b.EDP,b.ExpressCode,b.Series,b.Battery,b.WarrantyEnd FROM (
+
+						SELECT * FROM IT_Transaction a
+						WHERE a.TransactionDate=(SELECT  max(b.TransactionDate) TransactionDate FROM IT_Transaction b WHERE a.assetSerialNo=b.assetSerialNo  )
+
+						) a
+						JOIN IT_Asset b ON a.assetSerialNo=b.SerialNo  AND b.type='A1'
+						WHERE 1=1 AND a.currentEmployeeID='$P!{userId}'
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+		<model  id="iphoneQuery">
+			<parameters>
+				<parameter name="userId" class="java.lang.String"  value="$P!{userId}" />
+			</parameters>
+			<SQLStrs>
+
+				<sqlStr>
+					<![CDATA[
+						SELECT b.Series,b.SerialNo,b.WarrantyEnd FROM (
+
+						SELECT * FROM IT_Transaction a
+						WHERE a.TransactionDate=(SELECT  max(b.TransactionDate) TransactionDate FROM IT_Transaction b WHERE a.assetSerialNo=b.assetSerialNo  )
+
+						) a
+						JOIN IT_Asset b ON a.assetSerialNo=b.SerialNo  AND b.type='A2'
+						WHERE 1=1 AND a.currentEmployeeID='$P!{userId}'
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+
+		<model  id="otherQuery">
+			<parameters>
+				<parameter name="userId" class="java.lang.String"  value="$P!{userId}" />
+			</parameters>
+			<SQLStrs>
+
+				<sqlStr>
+					<![CDATA[
+						SELECT a.QTY,a.TransactionDate,b.F_TITLE FROM IT_Transaction a
+						JOIN T_TAILOR_FORM b ON a.assetType=b.F_ID
+						WHERE a.assetType  NOT IN ('A1','A2') and  a.currentEmployeeID='$P!{userId}'
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+	</models>
+	<!--查询视图-->
+	<views   action="query">
+		<view modelid="computerQuery" sheetName="电脑"   top="4" left="0">
+			<propertys>
+				<property 	cellIndex="0,0" feild="ComputerName" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="EDP" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="ExpressCode" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="ExpressCode" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="Series" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="Battery" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="WarrantyEnd" 	type="java.lang.String"/>
+			</propertys>
+		</view>
+		<view modelid="iphoneQuery" sheetName="手机和其他"   top="4" left="0">
+			<propertys>
+				<property 	cellIndex="0,0" feild="Series" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="SerialNo" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="WarrantyEnd" 	type="java.lang.String"/>
+			</propertys>
+		</view>
+		<view modelid="otherQuery" sheetName="手机和其他"   top="4" left="4">
+			<propertys>
+				<property 	cellIndex="0,0" feild="F_TITLE" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="QTY" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="TransactionDate" 	type="java.lang.String"/>
+			</propertys>
+		</view>
+	</views>
+</excelConfig>

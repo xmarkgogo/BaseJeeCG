@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<excelConfig>
+	<parameters>
+		<!--保存时使用的模板,根据配置文件生成的excel,需要将数据保存为excel到本地,然后有save方法,再生成sql,保存到本地-->
+		<parameter name="outputFilePath" value="C:\tmp\test.xlsx"/>
+		<parameter name="template_FilePath" isShow="1" value="C:\00_Project\Jeesite070310\src\main\java\com\thinkgem\jeesite\common\excelConfig\test\xlsx\05StudentScore.xlsx"/>
+	</parameters>
+	<models cls="">
+		<!--
+		自定义获取数据源
+		请假的例子
+		-->
+		<model  id="ds">
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+					SELECT a.Sname
+,b.Cname
+,b.Credit
+FROM ZZStudent a
+JOIN ZZCourse b ON a.Sno=b.Semester ORDER BY a.Sno
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+	</models>
+ 		<views    action="query">
+		    <view modelid="ds" sheetName="sheet1"   top="1" left="1">
+				<propertys>
+					<property 	cellIndex="0,1" feild="Sname" 	type="java.lang.String"  />
+					<property 	cellIndex="0,1" feild="Cname"   type="java.lang.String" />
+					<property 	cellIndex="0,1" feild="Credit"   type="java.lang.Integer" />
+				</propertys>
+				</view>
+		</views>
+</excelConfig>

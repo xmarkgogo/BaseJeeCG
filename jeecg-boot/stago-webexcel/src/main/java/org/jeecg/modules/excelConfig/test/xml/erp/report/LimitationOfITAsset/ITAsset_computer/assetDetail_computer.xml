@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<excelConfig>
+	<parameters>
+		<!--保存时使用的模板,根据配置文件生成的excel,需要将数据保存为excel到本地,然后有save方法,再生成sql,保存到本地-->
+		<parameter name="outputFilePath" value="C:\temo\OUT.xlsx" isShow="1"/>
+		<!--<parameter isShow="1" name="template_FilePath" value="C:\00_Project\Jeesite070310\src\main\java\com\thinkgem\jeesite\common\excelConfig\test\xlsx\erp\enter\computer\computer.xlsx"/>-->
+		<parameter isShow="1" name="template_FilePath" value="assetDetail_computer.xlsx"/>
+		<parameter isShow="1" name="temlateSyntax" value="false"/>
+	</parameters>
+	<models cls="">
+		<!--
+			引用多数据源,
+			配置了全局参数
+		-->
+		<!--查询-->
+		<model  id="assetTypeQuery">
+			<SQLStrs>
+				<sqlStr>
+					<![CDATA[
+						SELECT * FROM(
+SELECT
+DATEDIFF ( dd , getdate() , WarrantyEnd ) [质保倒计时]
+, ComputerName [电脑名称]
+, EDP [固定资产编号]
+, SerialNo [财务编号]
+, ExpressCode [快速服务编码]
+, a.Field2 [资产状态]
+, a.Field5 [系统版本]
+, a.Field4 [DPMC]
+, a.Field3 [主账户]
+,WarrantyEnd [保质期结束时间]
+,datepart(yyyy,WarrantyEnd) [到保年份]
+,f.F_TITLE [资产类型]
+,isnull(e.site,'BST') [公司]
+,a.Series [电脑型号]
+,isnull(isnull(c.no,e.EmployeeID),'') [员工ID]
+,isnull(isnull(c.name ,e.EName),'IT库房')[员工姓名]
+,isnull(isnull(d.name,e.position),'IT') [部门]
+,b.Remark [备注]
+FROM IT_Asset a
+JOIN T_TAILOR_FORM f ON a.Type=f.F_ID
+INNER JOIN  (
+
+SELECT * FROM IT_Transaction a
+WHERE a.TransactionDate=(SELECT  max(b.TransactionDate) TransactionDate FROM IT_Transaction b WHERE a.assetSerialNo=b.assetSerialNo  )
+
+) b ON a.SerialNo = b.assetSerialNo
+LEFT JOIN IT_User e ON b.currentEmployeeID = e.EmployeeID
+LEFT JOIN sys_user c ON e.EmployeeID=c.no and c.del_flag='0'
+LEFT JOIN sys_office d ON c.office_id=d.id
+ WHERE 1=1    AND a.type='A1'
+ UNION ALL
+
+
+ SELECT
+DATEDIFF ( dd , getdate() , WarrantyEnd ) [质保倒计时]
+, ComputerName [电脑名称]
+, EDP [固定资产编号]
+, SerialNo [财务编号]
+, ExpressCode [快速服务编码]
+, a.Field2 [资产状态]
+, a.Field3 [主账户]
+, a.Field5 [系统版本]
+, a.Field4 [DPMC]
+,WarrantyEnd [保质期结束时间]
+,datepart(yyyy,WarrantyEnd) [到保年份]
+,f.F_TITLE [资产类型]
+,'BST' [公司]
+,a.Series [电脑型号]
+,'' [员工ID]
+,'IT库房' [员工姓名]
+,'IT' [部门]
+,''[备注]
+FROM IT_Asset  a
+JOIN T_TAILOR_FORM f ON a.Type=f.F_ID
+WHERE  a.SerialNo NOT IN (
+SELECT assetSerialNo FROM IT_Transaction a
+WHERE a.TransactionDate=(SELECT  max(b.TransactionDate) TransactionDate FROM IT_Transaction b WHERE a.assetSerialNo=b.assetSerialNo  )
+) AND a.type='A1'
+) temp ORDER BY [质保倒计时] DESC
+					]]>
+				</sqlStr>
+			</SQLStrs>
+		</model>
+	</models>
+	<!--查询视图-->
+	<views   action="query">
+		<view modelid="assetTypeQuery" sheetName="固定资产质保时效报告"   top="2" left="0">
+			<propertys>
+				<property 	cellIndex="0,1" feild="质保倒计时" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="电脑名称" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="电脑型号" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="固定资产编号" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="快速服务编码" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="财务编号" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="系统版本" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="DPMC" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="主账户" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="资产状态" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="保质期结束时间" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="到保年份" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="资产类型" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="员工ID" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="员工姓名" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="部门" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="公司" 	type="java.lang.String"/>
+				<property 	cellIndex="0,1" feild="备注" 	type="java.lang.String"/>
+			</propertys>
+		</view>
+	</views>
+</excelConfig>

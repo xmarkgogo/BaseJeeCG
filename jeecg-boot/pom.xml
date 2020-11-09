@@ -4,7 +4,7 @@
   <artifactId>jeecg-boot-parent</artifactId>
   <version>2.3.0</version>
   <packaging>pom</packaging>
-  
+
   	<parent>
 	    <groupId>org.springframework.boot</groupId>
 	    <artifactId>spring-boot-starter-parent</artifactId>
@@ -22,7 +22,8 @@
 		<module>jeecg-boot-module-system</module>
 		<module>jeecg-boot-module-demo</module>
 		<module>jeecg-cloud-module</module>
-	</modules>
+        <module>stago-webexcel</module>
+    </modules>
 
 	<distributionManagement>
 	  	<repository>
@@ -36,7 +37,7 @@
             <url>http://maven.jeecg.com:8090/nexus/content/repositories/snapshots/</url>
 	    </snapshotRepository>
 	</distributionManagement>
-	
+
 	<repositories>
 		<repository>
             <id>aliyun</id>
