@@ -3,6 +3,11 @@
 
     <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
+
+      <a-button type="primary"  @click="handleAddTest" >
+        按钮
+      </a-button>
+
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
 
@@ -309,7 +314,9 @@
       getAvatarView: function (avatar) {
         return getFileAccessHttpUrl(avatar)
       },
-
+        handleAddTest: function(){
+           alert(1);
+       },
       batchFrozen: function (status) {
         if (this.selectedRowKeys.length <= 0) {
           this.$message.warning('请选择一条记录！');

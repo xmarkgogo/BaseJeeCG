@@ -205,7 +205,7 @@
 				// 绑定菜单事件，代码重复待优化
                 var host = window.location.host;
                 var protocol = document.location.protocol;
-                var SaveURL =  protocol + "//" + host +ContextUrl+"/elfinder-servlet/connector";
+                var SaveURL =  protocol + "//" + host +"/"+ContextUrl+"/elfinder-servlet/connector";
                 designer.filePlus.SaveToServer(designer.wrapper.spread, SaveURL,"WebExcelSave",getQueryVariable("target"));
                 event.preventDefault();
                });
@@ -213,7 +213,7 @@
               $("#save-SSJSON").on('click', function (e) {
                   var host = window.location.host;
                   var protocol = document.location.protocol;
-                  var SaveURL =  protocol + "//" + host + +ContextUrl+"/elfinder-servlet/connector";
+                  var SaveURL =  protocol + "//" + host +"/"+ContextUrl+"/elfinder-servlet/connector";
                   designer.filePlus.SaveToServer(designer.wrapper.spread, SaveURL,"WebExcelSaveJson",getQueryVariable("target"));
                   event.preventDefault();
               });
@@ -230,7 +230,7 @@
 					if(getQueryVariable("target")){
 						var host = window.location.host;
 						var protocol = document.location.protocol;
-						var SaveURL =  protocol + "//" + host +ContextUrl+ "/elfinder-servlet/connector";
+						var SaveURL =  protocol + "//" + host +"/"+ContextUrl+ "/elfinder-servlet/connector";
 						designer.filePlus.SaveToServer(designer.wrapper.spread, SaveURL,"WebExcelSave",getQueryVariable("target"));
 						event.preventDefault();
 					}else{
